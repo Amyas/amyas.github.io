@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>13.实现完整的 diff 算法 | Amyas &#39; Blog</title>
+    <meta name="generator" content="VuePress 1.9.7">
+    
+    <meta name="description" content="技术沉淀">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    
+    <link rel="preload" href="/assets/css/0.styles.65c859ad.css" as="style"><link rel="preload" href="/assets/js/app.620f4049.js" as="script"><link rel="preload" href="/assets/js/2.3749b943.js" as="script"><link rel="preload" href="/assets/js/106.d6beab1c.js" as="script"><link rel="prefetch" href="/assets/js/10.f840d0d4.js"><link rel="prefetch" href="/assets/js/100.3d77bca7.js"><link rel="prefetch" href="/assets/js/101.12792faf.js"><link rel="prefetch" href="/assets/js/102.853ad9f4.js"><link rel="prefetch" href="/assets/js/103.25dd462d.js"><link rel="prefetch" href="/assets/js/104.077e0fca.js"><link rel="prefetch" href="/assets/js/105.2a95cd34.js"><link rel="prefetch" href="/assets/js/107.e91967de.js"><link rel="prefetch" href="/assets/js/108.18ced603.js"><link rel="prefetch" href="/assets/js/109.99a0ba07.js"><link rel="prefetch" href="/assets/js/11.715a234c.js"><link rel="prefetch" href="/assets/js/110.17acc510.js"><link rel="prefetch" href="/assets/js/111.7b87b4a7.js"><link rel="prefetch" href="/assets/js/112.0ea0f170.js"><link rel="prefetch" href="/assets/js/113.278c8fe0.js"><link rel="prefetch" href="/assets/js/114.ec99033f.js"><link rel="prefetch" href="/assets/js/115.3eee3360.js"><link rel="prefetch" href="/assets/js/116.00740a49.js"><link rel="prefetch" href="/assets/js/117.c6f2cdce.js"><link rel="prefetch" href="/assets/js/118.df9abd5a.js"><link rel="prefetch" href="/assets/js/119.f78427c7.js"><link rel="prefetch" href="/assets/js/12.6c7777a8.js"><link rel="prefetch" href="/assets/js/120.c4281372.js"><link rel="prefetch" href="/assets/js/121.a003177d.js"><link rel="prefetch" href="/assets/js/122.021d220e.js"><link rel="prefetch" href="/assets/js/13.813491e8.js"><link rel="prefetch" href="/assets/js/14.ad1eff29.js"><link rel="prefetch" href="/assets/js/15.a722143d.js"><link rel="prefetch" href="/assets/js/16.e77252f6.js"><link rel="prefetch" href="/assets/js/17.68dc69af.js"><link rel="prefetch" href="/assets/js/18.ef2c0acd.js"><link rel="prefetch" href="/assets/js/19.8aa19d01.js"><link rel="prefetch" href="/assets/js/20.02375ac5.js"><link rel="prefetch" href="/assets/js/21.5bad3c10.js"><link rel="prefetch" href="/assets/js/22.55b56147.js"><link rel="prefetch" href="/assets/js/23.8a14c811.js"><link rel="prefetch" href="/assets/js/24.273755ce.js"><link rel="prefetch" href="/assets/js/25.2eee9503.js"><link rel="prefetch" href="/assets/js/26.abddb6bd.js"><link rel="prefetch" href="/assets/js/27.75157c4d.js"><link rel="prefetch" href="/assets/js/28.9d2f9575.js"><link rel="prefetch" href="/assets/js/29.4214269f.js"><link rel="prefetch" href="/assets/js/3.1e7d6db8.js"><link rel="prefetch" href="/assets/js/30.091e9fa4.js"><link rel="prefetch" href="/assets/js/31.c5db88d7.js"><link rel="prefetch" href="/assets/js/32.3040f96b.js"><link rel="prefetch" href="/assets/js/33.21915d39.js"><link rel="prefetch" href="/assets/js/34.cd557843.js"><link rel="prefetch" href="/assets/js/35.94d4168e.js"><link rel="prefetch" href="/assets/js/36.8f59b1b3.js"><link rel="prefetch" href="/assets/js/37.8cf232c7.js"><link rel="prefetch" href="/assets/js/38.921cf10a.js"><link rel="prefetch" href="/assets/js/39.0bb57063.js"><link rel="prefetch" href="/assets/js/4.b2176209.js"><link rel="prefetch" href="/assets/js/40.f1f999d2.js"><link rel="prefetch" href="/assets/js/41.fd684198.js"><link rel="prefetch" href="/assets/js/42.88e06585.js"><link rel="prefetch" href="/assets/js/43.81b72fd8.js"><link rel="prefetch" href="/assets/js/44.fbd55b22.js"><link rel="prefetch" href="/assets/js/45.42eb7754.js"><link rel="prefetch" href="/assets/js/46.f04d8f5d.js"><link rel="prefetch" href="/assets/js/47.ccf0047c.js"><link rel="prefetch" href="/assets/js/48.48399857.js"><link rel="prefetch" href="/assets/js/49.519a2729.js"><link rel="prefetch" href="/assets/js/5.63e42f3f.js"><link rel="prefetch" href="/assets/js/50.47fb9b6c.js"><link rel="prefetch" href="/assets/js/51.39aeb3e5.js"><link rel="prefetch" href="/assets/js/52.9ba24757.js"><link rel="prefetch" href="/assets/js/53.11945098.js"><link rel="prefetch" href="/assets/js/54.3008f50c.js"><link rel="prefetch" href="/assets/js/55.625a8a4f.js"><link rel="prefetch" href="/assets/js/56.995e4dee.js"><link rel="prefetch" href="/assets/js/57.47e0a988.js"><link rel="prefetch" href="/assets/js/58.bb96b774.js"><link rel="prefetch" href="/assets/js/59.9f25bd4e.js"><link rel="prefetch" href="/assets/js/6.63cd06be.js"><link rel="prefetch" href="/assets/js/60.4e81f26e.js"><link rel="prefetch" href="/assets/js/61.7884909c.js"><link rel="prefetch" href="/assets/js/62.ac058932.js"><link rel="prefetch" href="/assets/js/63.704c2a94.js"><link rel="prefetch" href="/assets/js/64.525d436b.js"><link rel="prefetch" href="/assets/js/65.af0bfb1b.js"><link rel="prefetch" href="/assets/js/66.cb35cb06.js"><link rel="prefetch" href="/assets/js/67.afcc0246.js"><link rel="prefetch" href="/assets/js/68.3361b291.js"><link rel="prefetch" href="/assets/js/69.ff6cc36c.js"><link rel="prefetch" href="/assets/js/7.e43c38a2.js"><link rel="prefetch" href="/assets/js/70.81c0910c.js"><link rel="prefetch" href="/assets/js/71.75ebd7af.js"><link rel="prefetch" href="/assets/js/72.7d5c7237.js"><link rel="prefetch" href="/assets/js/73.72b20804.js"><link rel="prefetch" href="/assets/js/74.72840dd1.js"><link rel="prefetch" href="/assets/js/75.643e97f7.js"><link rel="prefetch" href="/assets/js/76.905fa3d9.js"><link rel="prefetch" href="/assets/js/77.0a8c12df.js"><link rel="prefetch" href="/assets/js/78.18a4b0ae.js"><link rel="prefetch" href="/assets/js/79.36be88b8.js"><link rel="prefetch" href="/assets/js/8.42e14013.js"><link rel="prefetch" href="/assets/js/80.3c9c0cc2.js"><link rel="prefetch" href="/assets/js/81.599941c3.js"><link rel="prefetch" href="/assets/js/82.059655f7.js"><link rel="prefetch" href="/assets/js/83.e65816c7.js"><link rel="prefetch" href="/assets/js/84.cb5112ca.js"><link rel="prefetch" href="/assets/js/85.7a45b591.js"><link rel="prefetch" href="/assets/js/86.4a896150.js"><link rel="prefetch" href="/assets/js/87.620681b4.js"><link rel="prefetch" href="/assets/js/88.43e42521.js"><link rel="prefetch" href="/assets/js/89.42557852.js"><link rel="prefetch" href="/assets/js/9.9a46eefb.js"><link rel="prefetch" href="/assets/js/90.f655f689.js"><link rel="prefetch" href="/assets/js/91.066e1ca1.js"><link rel="prefetch" href="/assets/js/92.58bb98f7.js"><link rel="prefetch" href="/assets/js/93.63afc2c1.js"><link rel="prefetch" href="/assets/js/94.25e1474e.js"><link rel="prefetch" href="/assets/js/95.c1c127ec.js"><link rel="prefetch" href="/assets/js/96.f31e1683.js"><link rel="prefetch" href="/assets/js/97.338577da.js"><link rel="prefetch" href="/assets/js/98.ccbd1501.js"><link rel="prefetch" href="/assets/js/99.93cd07fb.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.65c859ad.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">Amyas ' Blog</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/interview-questions/" class="nav-link router-link-active">
+  总结
+</a></div><div class="nav-item"><a href="/frontend-engineering/" class="nav-link">
+  前端工程化
+</a></div><div class="nav-item"><a href="/design-mode/" class="nav-link">
+  设计模式
+</a></div><div class="nav-item"><a href="/data-structure-and-algorithm/" class="nav-link">
+  数据结构与算法
+</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/interview-questions/" class="nav-link router-link-active">
+  总结
+</a></div><div class="nav-item"><a href="/frontend-engineering/" class="nav-link">
+  前端工程化
+</a></div><div class="nav-item"><a href="/design-mode/" class="nav-link">
+  设计模式
+</a></div><div class="nav-item"><a href="/data-structure-and-algorithm/" class="nav-link">
+  数据结构与算法
+</a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>0、HTTP</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>1、HTML&amp;CSS</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>2、JavaScript</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>3、ES6</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>4、Async</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>5、Mobile</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>6、Vue2</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>8、Vue3</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading open"><span>vue</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/interview-questions/8、Vue3/vue/1.html" class="sidebar-link">1.搭建 Vue3 开发环境</a></li><li><a href="/interview-questions/8、Vue3/vue/2.html" class="sidebar-link">2.实现 reactive</a></li><li><a href="/interview-questions/8、Vue3/vue/3.html" class="sidebar-link">3.初步实现 effect 函数</a></li><li><a href="/interview-questions/8、Vue3/vue/4.html" class="sidebar-link">4.effect 实现原理</a></li><li><a href="/interview-questions/8、Vue3/vue/5.html" class="sidebar-link">5.完善 reactive 方法</a></li><li><a href="/interview-questions/8、Vue3/vue/6.html" class="sidebar-link">6.计算属性的实现</a></li><li><a href="/interview-questions/8、Vue3/vue/7.html" class="sidebar-link">7.watch 实现原理</a></li><li><a href="/interview-questions/8、Vue3/vue/8.html" class="sidebar-link">8.ref 实现</a></li><li><a href="/interview-questions/8、Vue3/vue/9.html" class="sidebar-link">9.实现 dom api</a></li><li><a href="/interview-questions/8、Vue3/vue/10.html" class="sidebar-link">10.虚拟 dom 实现</a></li><li><a href="/interview-questions/8、Vue3/vue/11.html" class="sidebar-link">11.实现 vue 的初渲染</a></li><li><a href="/interview-questions/8、Vue3/vue/12.html" class="sidebar-link">12.实现 diff 算法</a></li><li><a href="/interview-questions/8、Vue3/vue/13.html" class="active sidebar-link">13.实现完整的 diff 算法</a></li></ul></section></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="_13-实现完整的-diff-算法"><a href="#_13-实现完整的-diff-算法" class="header-anchor">#</a> 13.实现完整的 diff 算法</h1> <div class="language-html extra-class"><pre class="language-html"><code><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">&quot;</span>en<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">&quot;</span>UTF-8<span class="token punctuation">&quot;</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">http-equiv</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">&quot;</span>X-UA-Compatible<span class="token punctuation">&quot;</span></span> <span class="token attr-name">content</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">&quot;</span>IE=edge<span class="token punctuation">&quot;</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">&quot;</span>viewport<span class="token punctuation">&quot;</span></span> <span class="token attr-name">content</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">&quot;</span>width=device-width, initial-scale=1.0<span class="token punctuation">&quot;</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Document<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">&quot;</span>app<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">&quot;</span>./dist/runtime-dom.global.js<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span><span class="token script"></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+      <span class="token keyword">const</span> <span class="token punctuation">{</span> createRenderer<span class="token punctuation">,</span> h<span class="token punctuation">,</span> render <span class="token punctuation">}</span> <span class="token operator">=</span> VueRuntimeDOM<span class="token punctuation">;</span>
+
+      <span class="token comment">// render(</span>
+      <span class="token comment">//   h(</span>
+      <span class="token comment">//     &quot;h1&quot;,</span>
+      <span class="token comment">//     {</span>
+      <span class="token comment">//       a: 1,</span>
+      <span class="token comment">//       b: 2,</span>
+      <span class="token comment">//       style: { color: &quot;red&quot; },</span>
+      <span class="token comment">//       onClick: () =&gt; console.log(1),</span>
+      <span class="token comment">//     },</span>
+      <span class="token comment">//     &quot;hello world&quot;</span>
+      <span class="token comment">//   ),</span>
+      <span class="token comment">//   app</span>
+      <span class="token comment">// );</span>
+
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(h(&quot;h1&quot;, h(&quot;span&quot;, &quot;hello world 123&quot;)), app);</span>
+      <span class="token comment">// }, 1000);</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(h(null, app));</span>
+      <span class="token comment">// }, 2000);</span>
+
+      <span class="token comment">// render(h(&quot;h1&quot;, h(&quot;span&quot;, &quot;hello world&quot;)), app);</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(h(&quot;h2&quot;, h(&quot;span&quot;, &quot;hello world update&quot;)), app);</span>
+      <span class="token comment">// }, 1000);</span>
+
+      <span class="token comment">// render(h(&quot;h1&quot;, { style: { color: &quot;red&quot; } }, &quot;hello world&quot;), app);</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(h(&quot;h1&quot;, { style: { color: &quot;blue&quot; } }, &quot;hello world&quot;), app);</span>
+      <span class="token comment">// }, 1000);</span>
+
+      <span class="token comment">// 1.文本  数组  删除儿子、设置文本内容</span>
+      <span class="token comment">// render(h(&quot;h1&quot;, [&quot;hello&quot;, &quot;world&quot;]), app);</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(h(&quot;h1&quot;, &quot;update&quot;), app);</span>
+      <span class="token comment">// }, 1000);</span>
+      <span class="token comment">// render(h(&quot;h1&quot;, &quot;hello&quot;), app);</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(h(&quot;h1&quot;, &quot;update&quot;), app);</span>
+      <span class="token comment">// }, 1000);</span>
+
+      <span class="token comment">// 7.空    数组  删除所有儿子</span>
+      <span class="token comment">// render(h(&quot;h1&quot;, [&quot;hello&quot;, &quot;world&quot;]), app);</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(h(&quot;h1&quot;), app);</span>
+      <span class="token comment">// }, 1000);</span>
+
+      <span class="token comment">// 5.数组  文本  清空文本，进行挂载</span>
+      <span class="token comment">// render(h(&quot;h1&quot;, &quot;hello&quot;), app);</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(h(&quot;h1&quot;, [&quot;hello&quot;, &quot;world&quot;]), app);</span>
+      <span class="token comment">// }, 1000);</span>
+      <span class="token comment">// 6.数组  空    进行挂载</span>
+      <span class="token comment">// render(h(&quot;h1&quot;), app);</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(h(&quot;h1&quot;, [&quot;hello&quot;, &quot;world&quot;]), app);</span>
+      <span class="token comment">// }, 1000);</span>
+      <span class="token comment">// 8.空    文本  清空文本</span>
+      <span class="token comment">// render(h(&quot;h1&quot;, &quot;hello&quot;), app);</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(h(&quot;h1&quot;), app);</span>
+      <span class="token comment">// }, 1000);</span>
+
+      <span class="token comment">// render(</span>
+      <span class="token comment">//   h(&quot;div&quot;, { style: { color: &quot;red&quot; } }, [</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;a1&quot;, style: { color: &quot;red&quot; } }, &quot;hello&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;a2&quot;, style: { color: &quot;yellow&quot; } }, &quot;world&quot;),</span>
+      <span class="token comment">//   ]),</span>
+      <span class="token comment">//   app</span>
+      <span class="token comment">// );</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(</span>
+      <span class="token comment">//     h(&quot;div&quot;, { style: { color: &quot;red&quot; } }, [</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;a1&quot;, style: { color: &quot;pink&quot; } }, &quot;hello 1&quot;),</span>
+      <span class="token comment">//     ]),</span>
+      <span class="token comment">//     app</span>
+      <span class="token comment">//   );</span>
+      <span class="token comment">// }, 1000);</span>
+
+      <span class="token comment">//   while (i &lt;= e1 &amp;&amp; i &lt;= e2) {</span>
+      <span class="token comment">//   const n1 = c1[i];</span>
+      <span class="token comment">//   const n2 = c2[i];</span>
+      <span class="token comment">//   if (isSameVNode(n1, n2)) {</span>
+      <span class="token comment">//     patch(n1, n2, el);</span>
+      <span class="token comment">//   } else {</span>
+      <span class="token comment">//     break;</span>
+      <span class="token comment">//   }</span>
+      <span class="token comment">//   i++;</span>
+      <span class="token comment">// }</span>
+
+      <span class="token comment">//   if (i &gt; e1) {</span>
+      <span class="token comment">//   if (i &lt;= e2) {</span>
+      <span class="token comment">//     while (i &lt;= e2) {</span>
+      <span class="token comment">//       patch(null, c2[i], el); // 插入节点</span>
+      <span class="token comment">//       i++;</span>
+      <span class="token comment">//     }</span>
+      <span class="token comment">//   }</span>
+      <span class="token comment">// }</span>
+      <span class="token comment">// render(</span>
+      <span class="token comment">//   h(&quot;div&quot;, [</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;a&quot; }, &quot;a&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;b&quot; }, &quot;b&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;c&quot; }, &quot;c&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;d&quot; }, &quot;d&quot;),</span>
+      <span class="token comment">//   ]),</span>
+      <span class="token comment">//   app</span>
+      <span class="token comment">// );</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(</span>
+      <span class="token comment">//     h(&quot;div&quot;, [</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;a&quot; }, &quot;a&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;b&quot; }, &quot;b&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;c&quot; }, &quot;c&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;d&quot; }, &quot;d&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;e&quot; }, &quot;e&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;f&quot; }, &quot;f&quot;),</span>
+      <span class="token comment">//     ]),</span>
+      <span class="token comment">//     app</span>
+      <span class="token comment">//   );</span>
+      <span class="token comment">// }, 1000);</span>
+
+      <span class="token comment">// render(</span>
+      <span class="token comment">//   h(&quot;div&quot;, [</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;c&quot; }, &quot;c&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;d&quot; }, &quot;d&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;e&quot; }, &quot;e&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;f&quot; }, &quot;f&quot;),</span>
+      <span class="token comment">//   ]),</span>
+      <span class="token comment">//   app</span>
+      <span class="token comment">// );</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(</span>
+      <span class="token comment">//     h(&quot;div&quot;, [</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;a&quot; }, &quot;a&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;b&quot; }, &quot;b&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;c&quot; }, &quot;c&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;d&quot; }, &quot;d&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;e&quot; }, &quot;e&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;f&quot; }, &quot;f&quot;),</span>
+      <span class="token comment">//     ]),</span>
+      <span class="token comment">//     app</span>
+      <span class="token comment">//   );</span>
+      <span class="token comment">// }, 1000);</span>
+
+      <span class="token comment">// render(</span>
+      <span class="token comment">//   h(&quot;div&quot;, [</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;a&quot; }, &quot;a&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;b&quot; }, &quot;b&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;c&quot; }, &quot;c&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;d&quot; }, &quot;d&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;e&quot; }, &quot;e&quot;),</span>
+      <span class="token comment">//     h(&quot;p&quot;, { key: &quot;f&quot; }, &quot;f&quot;),</span>
+      <span class="token comment">//   ]),</span>
+      <span class="token comment">//   app</span>
+      <span class="token comment">// );</span>
+      <span class="token comment">// setTimeout(() =&gt; {</span>
+      <span class="token comment">//   render(</span>
+      <span class="token comment">//     h(&quot;div&quot;, [</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;a&quot; }, &quot;a&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;b&quot; }, &quot;b&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;c&quot; }, &quot;c&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;d&quot; }, &quot;d&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;e&quot; }, &quot;e&quot;),</span>
+      <span class="token comment">//       h(&quot;p&quot;, { key: &quot;f&quot; }, &quot;f&quot;),</span>
+      <span class="token comment">//     ]),</span>
+      <span class="token comment">//     app</span>
+      <span class="token comment">//   );</span>
+      <span class="token comment">// }, 1000);</span>
+
+      <span class="token function">render</span><span class="token punctuation">(</span>
+        <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;div&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">[</span>
+          <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;a&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;a&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;b&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;b&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;c&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;c&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;d&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;d&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;e&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;e&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;f&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;f&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;g&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;g&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        app
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token function">render</span><span class="token punctuation">(</span>
+          <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;div&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">[</span>
+            <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;a&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;a&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;b&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;b&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;d&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;d&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;e&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;e&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;q&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;q&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;f&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;f&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token function">h</span><span class="token punctuation">(</span><span class="token string">&quot;p&quot;</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">key</span><span class="token operator">:</span> <span class="token string">&quot;g&quot;</span> <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">&quot;g&quot;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          <span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          app
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token number">1000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre></div><div class="language-ts extra-class"><pre class="language-ts"><code><span class="token comment">// packages/runtime-core/src/renderer.ts</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> isNumber<span class="token punctuation">,</span> isString <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">&quot;@vue/shared&quot;</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> createVNode<span class="token punctuation">,</span> isSameVNode<span class="token punctuation">,</span> ShapeFlags<span class="token punctuation">,</span> Text <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">&quot;./createVNode&quot;</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">createRenderer</span><span class="token punctuation">(</span>options<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> <span class="token punctuation">{</span>
+    createElement<span class="token operator">:</span> hostCreateElement<span class="token punctuation">,</span>
+    createTextNode<span class="token operator">:</span> hostCreateTextNode<span class="token punctuation">,</span>
+    insert<span class="token operator">:</span> hostInsert<span class="token punctuation">,</span>
+    remove<span class="token operator">:</span> hostRemove<span class="token punctuation">,</span>
+    querySelector<span class="token operator">:</span> hostQuerySelector<span class="token punctuation">,</span>
+    parentNode<span class="token operator">:</span> hostParentNode<span class="token punctuation">,</span>
+    nextSibling<span class="token operator">:</span> hostNextSibling<span class="token punctuation">,</span>
+    setText<span class="token operator">:</span> hostSetText<span class="token punctuation">,</span>
+    setElementText<span class="token operator">:</span> hostSetElementText<span class="token punctuation">,</span>
+    patchProp<span class="token operator">:</span> hostPatchProp<span class="token punctuation">,</span>
+  <span class="token punctuation">}</span> <span class="token operator">=</span> options<span class="token punctuation">;</span>
+
+  <span class="token keyword">function</span> <span class="token function">normalize</span><span class="token punctuation">(</span>children<span class="token punctuation">,</span> i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isString</span><span class="token punctuation">(</span>children<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token function">isNumber</span><span class="token punctuation">(</span>children<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 给文本加表示</span>
+      children<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">createVNode</span><span class="token punctuation">(</span>Text<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> children<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> children<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">mountChildren</span><span class="token punctuation">(</span>children<span class="token punctuation">,</span> container<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> children<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">let</span> child <span class="token operator">=</span> <span class="token function">normalize</span><span class="token punctuation">(</span>children<span class="token punctuation">,</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token comment">// 子元素可能是文本节点</span>
+      <span class="token function">patch</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> child<span class="token punctuation">,</span> container<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">patchProps</span><span class="token punctuation">(</span>oldProps<span class="token punctuation">,</span> newProps<span class="token punctuation">,</span> el<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>oldProps <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> oldProps <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newProps <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> newProps <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 循环新的覆盖老的</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> key <span class="token keyword">in</span> newProps<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">hostPatchProp</span><span class="token punctuation">(</span>el<span class="token punctuation">,</span> key<span class="token punctuation">,</span> oldProps<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">,</span> newProps<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 老的有的新的没有要删除</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> key <span class="token keyword">in</span> oldProps<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>newProps<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">hostPatchProp</span><span class="token punctuation">(</span>el<span class="token punctuation">,</span> key<span class="token punctuation">,</span> oldProps<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">mountElement</span><span class="token punctuation">(</span>vnode<span class="token punctuation">,</span> container<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> type<span class="token punctuation">,</span> props<span class="token punctuation">,</span> children<span class="token punctuation">,</span> shapeFlags <span class="token punctuation">}</span> <span class="token operator">=</span> vnode<span class="token punctuation">;</span>
+
+    <span class="token comment">// 因为我们后续需要对比虚拟节点的差异更新页面，所以需要保留对应的真实节点</span>
+    <span class="token keyword">const</span> el <span class="token operator">=</span> <span class="token punctuation">(</span>vnode<span class="token punctuation">.</span>el <span class="token operator">=</span> <span class="token function">hostCreateElement</span><span class="token punctuation">(</span>type<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>props<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">patchProps</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> props<span class="token punctuation">,</span> el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// children 不是数组就是文本</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>shapeFlags <span class="token operator">&amp;</span> ShapeFlags<span class="token punctuation">.</span><span class="token constant">TEXT_CHILDREN</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">hostSetElementText</span><span class="token punctuation">(</span>el<span class="token punctuation">,</span> children<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>shapeFlags <span class="token operator">&amp;</span> ShapeFlags<span class="token punctuation">.</span><span class="token constant">ARRAY_CHILDREN</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">mountChildren</span><span class="token punctuation">(</span>children<span class="token punctuation">,</span> el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">hostInsert</span><span class="token punctuation">(</span>el<span class="token punctuation">,</span> container<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">processText</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> container<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>n1 <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">hostInsert</span><span class="token punctuation">(</span><span class="token punctuation">(</span>n2<span class="token punctuation">.</span>el <span class="token operator">=</span> <span class="token function">hostCreateTextNode</span><span class="token punctuation">(</span>n2<span class="token punctuation">.</span>children<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> container<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">processElement</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>n1 <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">mountElement</span><span class="token punctuation">(</span>n2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 比较元素</span>
+      <span class="token function">patchElement</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">patchElement</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// n1 和 n2 能复用，说明dom节点不用删除</span>
+    <span class="token keyword">const</span> el <span class="token operator">=</span> <span class="token punctuation">(</span>n2<span class="token punctuation">.</span>el <span class="token operator">=</span> n1<span class="token punctuation">.</span>el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> oldProps <span class="token operator">=</span> n1<span class="token punctuation">.</span>props<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> newProps <span class="token operator">=</span> n2<span class="token punctuation">.</span>props<span class="token punctuation">;</span>
+
+    <span class="token function">patchProps</span><span class="token punctuation">(</span>oldProps<span class="token punctuation">,</span> newProps<span class="token punctuation">,</span> el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 自己比较完，比较儿子</span>
+    <span class="token function">patchChildren</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">unmountChildren</span><span class="token punctuation">(</span>children<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    children<span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token punctuation">(</span>child<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+      <span class="token function">unmount</span><span class="token punctuation">(</span>child<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">patchChildren</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> el<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> c1 <span class="token operator">=</span> n1<span class="token punctuation">.</span>children<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> c2 <span class="token operator">=</span> n2<span class="token punctuation">.</span>children<span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> prevShapeFlag <span class="token operator">=</span> n1<span class="token punctuation">.</span>shapeFlags<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> shapeFlag <span class="token operator">=</span> n2<span class="token punctuation">.</span>shapeFlags<span class="token punctuation">;</span>
+
+    <span class="token comment">// 开始比较儿子的情况</span>
+    <span class="token comment">/*
+    新    老
+    1.文本  数组  删除儿子、设置文本内容
+    2.文本  文本  更新文本
+    3.文本  空    更新文本
+    4.数组  数组  diff算法
+    5.数组  文本  清空文本，进行挂载
+    6.数组  空    进行挂载
+    7.空    数组  删除所有儿子
+    8.空    文本  清空文本
+    9.空    空    无需处理
+    */</span>
+
+    <span class="token comment">// 1.文本  数组  删除儿子、设置文本内容</span>
+    <span class="token comment">// 2.文本  文本  更新文本</span>
+    <span class="token comment">// 3.文本  空    更新文本</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>shapeFlag <span class="token operator">&amp;</span> ShapeFlags<span class="token punctuation">.</span><span class="token constant">TEXT_CHILDREN</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>prevShapeFlag <span class="token operator">&amp;</span> ShapeFlags<span class="token punctuation">.</span><span class="token constant">ARRAY_CHILDREN</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 1.文本  数组  删除儿子、设置文本内容</span>
+        <span class="token function">unmountChildren</span><span class="token punctuation">(</span>c1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>c1 <span class="token operator">!==</span> c2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">hostSetElementText</span><span class="token punctuation">(</span>el<span class="token punctuation">,</span> c2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 要么是空要么是数组</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>prevShapeFlag <span class="token operator">&amp;</span> ShapeFlags<span class="token punctuation">.</span><span class="token constant">ARRAY_CHILDREN</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 之前是数组</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>shapeFlag <span class="token operator">&amp;</span> ShapeFlags<span class="token punctuation">.</span><span class="token constant">ARRAY_CHILDREN</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token comment">// 4.数组  数组  diff算法</span>
+          <span class="token function">patchKeyedChildren</span><span class="token punctuation">(</span>c1<span class="token punctuation">,</span> c2<span class="token punctuation">,</span> el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+          <span class="token comment">// 7.空    数组  删除所有儿子</span>
+          <span class="token function">unmountChildren</span><span class="token punctuation">(</span>c1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 5.数组  文本  清空文本，进行挂载</span>
+        <span class="token comment">// 6.数组  空    进行挂载</span>
+        <span class="token comment">// 8.空    文本  清空文本</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>prevShapeFlag <span class="token operator">&amp;</span> ShapeFlags<span class="token punctuation">.</span><span class="token constant">TEXT_CHILDREN</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token function">hostSetElementText</span><span class="token punctuation">(</span>el<span class="token punctuation">,</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>shapeFlag <span class="token operator">&amp;</span> ShapeFlags<span class="token punctuation">.</span><span class="token constant">ARRAY_CHILDREN</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token function">mountChildren</span><span class="token punctuation">(</span>c2<span class="token punctuation">,</span> el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">patchKeyedChildren</span><span class="token punctuation">(</span>c1<span class="token punctuation">,</span> c2<span class="token punctuation">,</span> el<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 比较c1和c2两个数组之间的差异，再去更新el</span>
+    <span class="token comment">// 尽量复用节点，而且找到变化的位置</span>
+    <span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> e1 <span class="token operator">=</span> c1<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> e2 <span class="token operator">=</span> c2<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 有任何一方比对完成后，就无需再次比对，头开始sync from start</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e1 <span class="token operator">&amp;&amp;</span> i <span class="token operator">&lt;=</span> e2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> n1 <span class="token operator">=</span> c1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">const</span> n2 <span class="token operator">=</span> c2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isSameVNode</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">patch</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token keyword">break</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      i<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 有任何一方比对完成后，就无需再次比对，尾开始sync from end</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e1 <span class="token operator">&amp;&amp;</span> i <span class="token operator">&lt;=</span> e2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> n1 <span class="token operator">=</span> c1<span class="token punctuation">[</span>e1<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">const</span> n2 <span class="token operator">=</span> c2<span class="token punctuation">[</span>e2<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isSameVNode</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">patch</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token keyword">break</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      e1<span class="token operator">--</span><span class="token punctuation">;</span>
+      e2<span class="token operator">--</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 向前追加、向后追加 + 前删除、后删除</span>
+
+    <span class="token comment">// 新的多、老的少</span>
+    <span class="token comment">// 当i &lt; e1 说明老的全部比对完成</span>
+    <span class="token comment">// 1 到 e2之间的内容就是要新增的</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">&gt;</span> e1<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">while</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token keyword">const</span> nextPos <span class="token operator">=</span> e2 <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+          <span class="token comment">// 看一下，下一项是否在数组内，如果在数组内，看下是否有参照物</span>
+          <span class="token keyword">const</span> anchor <span class="token operator">=</span> c2<span class="token punctuation">.</span>length <span class="token operator">&lt;=</span> nextPos <span class="token operator">?</span> <span class="token keyword">null</span> <span class="token operator">:</span> c2<span class="token punctuation">[</span>nextPos<span class="token punctuation">]</span><span class="token punctuation">.</span>el<span class="token punctuation">;</span>
+          <span class="token function">patch</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> c2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> el<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 插入节点</span>
+          i<span class="token operator">++</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">&gt;</span> e2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 老的多、新的少</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e1<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">while</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e1<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token function">unmount</span><span class="token punctuation">(</span>c1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          i<span class="token operator">++</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 乱序</span>
+    <span class="token comment">// a b [c d e] f g</span>
+    <span class="token comment">// a b [d e q] f g</span>
+
+    <span class="token keyword">let</span> s1 <span class="token operator">=</span> i<span class="token punctuation">;</span> <span class="token comment">// 老的需要对比的部分</span>
+    <span class="token keyword">let</span> s2 <span class="token operator">=</span> i<span class="token punctuation">;</span> <span class="token comment">// 新的需要对比的部分</span>
+    <span class="token comment">// v2中是用新的找老的，v3使用老的找新的</span>
+
+    <span class="token keyword">let</span> toBePatched <span class="token operator">=</span> e2 <span class="token operator">-</span> s2 <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment">// 我们需要操作的次数</span>
+    <span class="token keyword">const</span> keyToNewIndexMap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Map</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> s2<span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> e2<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      keyToNewIndexMap<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>c2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span>key<span class="token punctuation">,</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> s1<span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> e1<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> oldVNode <span class="token operator">=</span> c1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token comment">// 用老的去找，看看新的里面有没有</span>
+      <span class="token keyword">const</span> newIndex <span class="token operator">=</span> keyToNewIndexMap<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>oldVNode<span class="token punctuation">.</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>newIndex<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">unmount</span><span class="token punctuation">(</span>oldVNode<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 新的里面找不到，直接移除</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token function">patch</span><span class="token punctuation">(</span>oldVNode<span class="token punctuation">,</span> c2<span class="token punctuation">[</span>newIndex<span class="token punctuation">]</span><span class="token punctuation">,</span> el<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 如果新老都哦鱼，我们需要比较比较两个节点的差异，再去比较他们的儿子</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 我们需要按照新的位置重新排列，并且还需要将新的元素添加上</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> toBePatched <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&gt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> i<span class="token operator">--</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> currentIndex <span class="token operator">=</span> s2 <span class="token operator">+</span> i<span class="token punctuation">;</span> <span class="token comment">// 找到对应的索引</span>
+      <span class="token keyword">const</span> child <span class="token operator">=</span> c2<span class="token punctuation">[</span>currentIndex<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">const</span> anchor <span class="token operator">=</span>
+        currentIndex <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">&lt;</span> c2<span class="token punctuation">.</span>length <span class="token operator">?</span> c2<span class="token punctuation">[</span>currentIndex <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>el <span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+
+      <span class="token comment">// 判断是移动还是新增，如何知道child是新增的</span>
+      <span class="token comment">// 如果有el是渲染过的</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>child<span class="token punctuation">.</span>el <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">patch</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> child<span class="token punctuation">,</span> el<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token function">hostInsert</span><span class="token punctuation">(</span>child<span class="token punctuation">.</span>el<span class="token punctuation">,</span> el<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">unmount</span><span class="token punctuation">(</span>n1<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">hostRemove</span><span class="token punctuation">(</span>n1<span class="token punctuation">.</span>el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// n1 之前的节点</span>
+  <span class="token comment">// n2 现在的节点</span>
+  <span class="token keyword">function</span> <span class="token function">patch</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> anchor <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 判断标签名和对应的key如果是一样的，说明是同一个节点</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>n1 <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token function">isSameVNode</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">unmount</span><span class="token punctuation">(</span>n1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      n1 <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span> <span class="token comment">// 将n1设置为null，此时会走n2的初始化重建</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> type<span class="token punctuation">,</span> shapeFlags <span class="token punctuation">}</span> <span class="token operator">=</span> n2<span class="token punctuation">;</span>
+
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span>type<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">case</span> Text<span class="token operator">:</span>
+        <span class="token function">processText</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> container<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">break</span><span class="token punctuation">;</span>
+      <span class="token keyword">default</span><span class="token operator">:</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>shapeFlags <span class="token operator">&amp;</span> ShapeFlags<span class="token punctuation">.</span><span class="token constant">ELEMENT</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token function">processElement</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">render</span><span class="token punctuation">(</span>vnode<span class="token punctuation">,</span> container<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>vnode <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 卸载元素</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>container<span class="token punctuation">.</span>_vnode<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">unmount</span><span class="token punctuation">(</span>container<span class="token punctuation">.</span>_vnode<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 初始化、更新</span>
+      <span class="token function">patch</span><span class="token punctuation">(</span>container<span class="token punctuation">.</span>_vnode <span class="token operator">||</span> <span class="token keyword">null</span><span class="token punctuation">,</span> vnode<span class="token punctuation">,</span> container<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    container<span class="token punctuation">.</span>_vnode <span class="token operator">=</span> vnode<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    render<span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/interview-questions/8、Vue3/vue/12.html" class="prev">
+        12.实现 diff 算法
+      </a></span> <!----></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.620f4049.js" defer></script><script src="/assets/js/2.3749b943.js" defer></script><script src="/assets/js/106.d6beab1c.js" defer></script>
+  </body>
+</html>
